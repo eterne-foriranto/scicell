@@ -58,14 +58,11 @@ class SciDataBase:
         return '|' + smth + '|'
 
     def record(self, tags, value):
-        print('recording...')
         tags.sort()
         key = '|' + '|'.join(tags) + '|'
-        print(key in self.__base['data'].keys())
         if key in self.__base['data'].keys():
             self.__base['data'][key].value = value
         else:
-            print('new')
             self.__base['data'][key] = self.Cell(value)
 
     def filter_tags(self, tags):
