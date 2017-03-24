@@ -3,6 +3,7 @@ from os import path, environ as env
 from sys import path as syp
 syp.append(path.expanduser('~/lib'))
 from SciDataBase import SciDataBase
+from units import *
 import sys
 data_file = env['SCIDAT']
 db = SciDataBase(data_file)
@@ -10,11 +11,11 @@ db = SciDataBase(data_file)
 class State:
     def __init__(self):
         self.psl = []
+        self.friendly_labels = {}
 
 s = State()
 def ud():
     sys.ps1 = '{} '.format(s.psl)
-    #exec('sys.ps1 = {} '.format(s.psl))
 ud()
 def print_filtered(tags):
     for i in db.filter_tags(tags):
@@ -35,3 +36,27 @@ def ch(data):
             exec('s.psl.{}(tag)'.format(action))
     print_filtered(s.psl)
     ud()
+
+def label(label, tags = s.psl):
+    s.friendly_labels[label] = db.safe_label(tags)
+
+def rc(obj, tags = s.psl):
+    db.record(tags, obj)
+    if type(obj) == SciDataBase.Lambdump:
+        db.make_c(tags)
+    db.save()
+
+def sv():
+    db.save()
+
+def form():
+    txt = input('Enter the formula...\n')
+    for key in s.friendly_labels.keys():
+        txt = txt.replace(key, 'self.get({})'.format(s.friendly_labels[key]))
+    return SciDataBase.Lambdump({}, txt)
+
+def rm(tags):
+    db.remove_cell(tags)
+
+def ll():
+    print_filtered(s.psl)
