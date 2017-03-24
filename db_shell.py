@@ -20,11 +20,18 @@ def print_filtered(tags):
     for i in db.filter_tags(tags):
         db.print_item(db.extract(i))
 
-def app(data):
+def ch(data):
     if type(data) == str:
-        s.psl.append(data)
+        if data in s.psl:
+            s.psl.remove(data)
+        else:
+            s.psl.append(data)
     else:
+        if set(data).issubset(set(s.psl)):
+            action = 'remove'
+        else:
+            action = 'append'
         for tag in data:
-            s.psl.append(tag)
+            exec('s.psl.{}(tag)'.format(action))
     print_filtered(s.psl)
     ud()
