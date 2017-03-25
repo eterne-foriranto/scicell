@@ -12,6 +12,9 @@ class State:
     def __init__(self):
         self.psl = []
         self.friendly_labels = {}
+        self.vanilla_iface = {
+                'gt':'get'
+                }
 
 s = State()
 def ud():
@@ -60,3 +63,6 @@ def rm(tags):
 
 def ll():
     print_filtered(s.psl)
+
+for key in s.vanilla_iface.keys():
+    exec('{} = db.{}'.format(key, s.vanilla_iface[key]))
