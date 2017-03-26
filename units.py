@@ -10,10 +10,14 @@ AVOGADRO = 6.022140857e23
 
 coefs = {}
 coefs['Joule'] = {
-        'Diopter':1 / PLANCK / LIGHTSPEED
+        'Diopter':1 / PLANCK / LIGHTSPEED,
+        'Joule_rMole':AVOGADRO
         }
 coefs['Diopter'] = {
         'Joule':PLANCK * LIGHTSPEED
+        }
+coefs['Joule_rMole'] = {
+        'Joule':1 / AVOGADRO
         }
 
 def hub(from_, to):
