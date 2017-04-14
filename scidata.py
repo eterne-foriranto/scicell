@@ -58,6 +58,8 @@ class SciDataBase:
         return '|' + smth + '|'
 
     def record(self, tags, value):
+        tags = set(tags)
+        tags = list(tags)
         tags.sort()
         key = '|' + '|'.join(tags) + '|'
         if key in self.__base['data'].keys():
@@ -88,8 +90,13 @@ class SciDataBase:
         else:
             context = cell.value.context
             context['self'] = self
-            exec('self.f = lambda: ' + cell.value.text, context)
-            return self.f()
+            code = cell.value.text
+            #code = wrap_nums(cell.value.text)
+            exec('self.f = lambda: ' + code, context)
+            try:
+                return self.f()
+            except:
+                print(code)
 
     def save(self):
         self.f = None
@@ -133,6 +140,8 @@ class SciDataBase:
         if type(tags) == str:
             return '|{}|'.format(tags)
         new = tags[:]
+        new = set(new)
+        new = list(new)
         new.sort()
         new = '|'.join(new)
         key = self.wrap(new)
@@ -151,6 +160,12 @@ class SciDataBase:
 
     def remove_script(self, num):
         del(self.__base['scripts'][num])
+
+    def list_scripts(self):
+        count = 0
+        for script in self.__base['scripts']:
+            print('{}. {}'.format(count, script.description))
+            count += 1
 
     def run_script(self, num):
         exec(self.__base['scripts'][num].body)

@@ -13,7 +13,8 @@ class State:
         self.psl = []
         self.friendly_labels = {}
         self.vanilla_iface = {
-                'gt':'get'
+                'gt':'get',
+                'sp':'split'
                 }
 
 s = State()
@@ -41,6 +42,8 @@ def ch(data):
     ud()
 
 def label(label, tags = s.psl):
+    if '|' in tags:
+        tags = db.extract(tags)
     s.friendly_labels[label] = db.safe_label(tags)
 
 def rc(obj, tags = s.psl):
@@ -64,5 +67,16 @@ def rm(tags):
 def ll():
     print_filtered(s.psl)
 
+def rl():
+    db = SciDataBase(data_file)
+
+def set_decimal(tags_unique, to_set):
+    a=db.filter_tags(tags_unique)
+    for key in a:
+	    tags = db.extract(key)
+	    cell = db.find_cell(tags)
+	    cell.decimal = to_set
+    sv()
+    
 for key in s.vanilla_iface.keys():
     exec('{} = db.{}'.format(key, s.vanilla_iface[key]))
