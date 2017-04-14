@@ -7,6 +7,7 @@ from uncertainties import ufloat as uf
 PLANCK = 6.626070040e-34
 LIGHTSPEED = 299792458
 AVOGADRO = 6.022140857e23
+CHARGE = 1.6021766208e-19
 
 coefs = {}
 coefs['Joule'] = {
@@ -14,7 +15,8 @@ coefs['Joule'] = {
         'Joule_rMole':AVOGADRO
         }
 coefs['Diopter'] = {
-        'Joule':PLANCK * LIGHTSPEED
+        'Joule':PLANCK * LIGHTSPEED,
+        'Joule_rMole':AVOGADRO * PLANCK * LIGHTSPEED
         }
 coefs['Joule_rMole'] = {
         'Joule':1 / AVOGADRO
@@ -53,6 +55,16 @@ class Unit():
             unit_obj = unit_obj.convert(self.__class__())
         return self.__class__(self.value - unit_obj.value)
 
+    def __mul__(self, comul):
+        t = type(comul)
+        if t == int or t == float:
+            return self.__class__(comul * self.value)
+
+    def __truediv__(self, divider):
+        t = type(divider)
+        if t == int or t == float:
+            return self.__class__(self.value / divider)
+
     def __repr__(self):
         class_ = str(self.__class__)
         raw_name = class_[class_.index('.') + 1:]
@@ -63,6 +75,13 @@ class Unit():
         k0, from_ = self.to_base()
         k1, to = obj.to_base()
         return type(obj)(self.value * k0 * hub(from_, to) / k1)
+
+class Number(float):
+    def __init__(self, value):
+        self.value = value
+
+    def __mul__(self, comul):
+        return type(comul)(self.value * comul.value)
 
 class Hartree(Unit):
     def to_base(self):
@@ -88,3 +107,7 @@ class kJoule_rMole(Unit):
 class kCalorie_rMole(Unit):
     def to_base(self):
         return 4184, 'Joule_rMole'
+
+class eV(Unit):
+    def to_base(self):
+        return CHARGE, 'Joule'

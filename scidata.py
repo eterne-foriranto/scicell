@@ -2,7 +2,26 @@
 from os import path
 from sys import path as syp
 syp.append(path.expanduser('~/lib'))
-import pickle
+import pickle, re
+from units import Number as N
+
+def wrap_nums(txt):
+    raw_list = txt.split('\'')
+    parity = 1
+    new_list = []
+    rex = re.compile('([\d]+)[ ]*\*', re.IGNORECASE)
+    #rex = re.compile('([\d]+\.?[\d]*([de][+-]?[\d]*)?)[ ]*\*', re.IGNORECASE)
+    for fragment in raw_list:
+        if parity == 1:
+            #print(rex.findall(fragment))
+            num = rex.findall(fragment)
+            print(type(num))
+            line = fragment.replace(num[0], 'N({})'.format(num[0]))
+        else:
+            line = fragment
+        new_list.append(line)
+        parity *= -1
+    return '\''.join(new_list)
 
 class SciDataBase:
     def __init__(self, file_):
@@ -58,6 +77,8 @@ class SciDataBase:
         return '|' + smth + '|'
 
     def record(self, tags, value):
+        tags = set(tags)
+        tags = list(tags)
         tags.sort()
         key = '|' + '|'.join(tags) + '|'
         if key in self.__base['data'].keys():
@@ -88,8 +109,14 @@ class SciDataBase:
         else:
             context = cell.value.context
             context['self'] = self
-            exec('self.f = lambda: ' + cell.value.text, context)
-            return self.f()
+            context['N'] = N
+            code = cell.value.text
+            #code = wrap_nums(cell.value.text)
+            exec('self.f = lambda: ' + code, context)
+            try:
+                return self.f()
+            except:
+                print(code)
 
     def save(self):
         self.f = None
@@ -122,6 +149,8 @@ class SciDataBase:
         try:
             if type(cell) == list:
                 return self.__base['data'][self.tags2key(cell)]
+            elif '|' in cell:
+                return self.__base['data'][cell]
             else:
                 for value in self.__base['data'].values():
                     if value.label == cell:
@@ -133,6 +162,8 @@ class SciDataBase:
         if type(tags) == str:
             return '|{}|'.format(tags)
         new = tags[:]
+        new = set(new)
+        new = list(new)
         new.sort()
         new = '|'.join(new)
         key = self.wrap(new)
@@ -151,6 +182,12 @@ class SciDataBase:
 
     def remove_script(self, num):
         del(self.__base['scripts'][num])
+
+    def list_scripts(self):
+        count = 0
+        for script in self.__base['scripts']:
+            print('{}. {}'.format(count, script.description))
+            count += 1
 
     def run_script(self, num):
         exec(self.__base['scripts'][num].body)
