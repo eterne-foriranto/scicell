@@ -7,10 +7,10 @@ from SciDataBase import SciDataBase as SDB
 def iround(num, decim_places):
     stringed_num = str(num)
     critical_position = stringed_num.index('.') + decim_places + 1
-    if stringed_num[critical_position] == '5':
-        to_round = '{}6{}'.format(stringed_num[:critical_position + 1], stringed_num[critical_position + 2:])
-    else:
-        to_round = stringed_num
+    to_round = stringed_num
+    if critical_position < len(stringed_num):
+        if stringed_num[critical_position] == '5':
+            to_round = '{}6{}'.format(stringed_num[:critical_position + 1], stringed_num[critical_position + 2:])
     return str(round(float(to_round), decim_places)).ljust(critical_position, '0')
 
 class SciViewer:
@@ -27,11 +27,18 @@ class SciViewer:
                 return ''
             raw_data = list(raw_data)
             keys = self.db.filter_tags(raw_data)
+            if len(keys) == 0:
+                return ''
             the_key = min(keys, key = lambda x: len(x))
-            data = the_key
+            the_tags = self.db.extract(the_key)
+            data = the_tags
         else:
             data = raw_data
-        raw = self.db.get(data).value
+        pre_raw = self.db.get(data)
+        try:
+            raw = self.db.get(data).value
+        except:
+            raw = self.db.get(data)
         try:
             if decim_places == None:
                 decimal = self.db.find_cell(data).decimal
@@ -39,7 +46,7 @@ class SciViewer:
                 decimal = decim_places
             return iround(raw, decimal)
         except:
-            return raw
+            return str(raw)
 
     def build_table(self, common, top, left):
         height = max([len(series) for series in left])
@@ -62,7 +69,6 @@ class SciViewer:
                 precell.collect_tags(i, left)
                 precell.collect_tags(j, top)
 
-                print(precell.tags)
                 line.append(self.print(precell.tags))
             lines.append(line)
         return Table(lines)
@@ -75,5 +81,4 @@ class Table:
         fin2join = []
         for line in self.data:
             fin2join.append('&'.join([cell for cell in line]))
-        file_var.write('\\\\\n'.join(fin2join))
-        print('\\\\\n'.join(fin2join))
+        file_var.write('\\\\\n'.join(fin2join) + '\\\\\n')
