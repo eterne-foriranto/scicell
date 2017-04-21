@@ -57,7 +57,9 @@ def sv():
 
 def form():
     txt = input('Enter the formula...\n')
-    for key in s.friendly_labels.keys():
+    keys = list(s.friendly_labels.keys())
+    keys.sort(key = lambda x: len(x), reverse = True)
+    for key in keys:
         txt = txt.replace(key, 'self.get({})'.format(s.friendly_labels[key]))
     return SciDataBase.Lambdump({}, txt)
 
