@@ -100,6 +100,9 @@ class Joule(Unit):
 class Joule_rMole(Unit):
     pass
 
+class Degree(Unit):
+    pass
+
 class kJoule_rMole(Unit):
     def to_base(self):
         return 1e3, 'Joule_rMole'
