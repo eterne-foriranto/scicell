@@ -30,6 +30,10 @@ def hub(from_, to):
 
 class Unit():
     def __init__(self, value = 1, error = None):
+        value = float(value)
+        if value.is_integer():
+            value = int(value)
+
         if error == None:
             self.value = value
         else:
