@@ -18,7 +18,7 @@ class SciViewer:
         self.file_ = file_
         self.db = SDB(file_)
 
-    def print(self, raw_data, decim_places = None):
+    def print(self, raw_data, decim_places = None, convert_to = None):
         if type(raw_data) == list:
             raw_data = set(raw_data)
             if None in raw_data:
@@ -34,11 +34,14 @@ class SciViewer:
             data = the_tags
         else:
             data = raw_data
-        pre_raw = self.db.get(data)
+        if not convert_to:
+            pre_raw = self.db.get(data)
+        else:
+            pre_raw = self.db.get(data).convert(convert_to())
         try:
-            raw = self.db.get(data).value
+            raw = pre_raw.value
         except:
-            raw = self.db.get(data)
+            raw = pre_raw
         try:
             if decim_places == None:
                 decimal = self.db.find_cell(data).decimal
