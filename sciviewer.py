@@ -76,6 +76,16 @@ class SciViewer:
             lines.append(line)
         return Table(lines)
 
+    def process_tags(self, tags, input_ = None):
+        if not input_:
+            input_ = []
+        keys = self.db.filter_tags(tags)
+        new = []
+        for key in keys:
+            new.append(self.db.extract(key))
+        input_.extend(new)
+        return input_
+
 class Table:
     def __init__(self, data):
         self.data = data
