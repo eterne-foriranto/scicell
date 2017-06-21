@@ -8,6 +8,7 @@ PLANCK = 6.626070040e-34
 LIGHTSPEED = 299792458
 AVOGADRO = 6.022140857e23
 CHARGE = 1.6021766208e-19
+BOHR = 0.52917721067e-10
 
 coefs = {}
 coefs['Joule'] = {
@@ -118,3 +119,11 @@ class kCalorie_rMole(Unit):
 class eV(Unit):
     def to_base(self):
         return CHARGE, 'Joule'
+
+class Meter(Unit):
+    def to_base(self):
+        return 1, 'Meter'
+
+class Bohr(Unit):
+    def to_base(self):
+        return BOHR, 'Meter'
