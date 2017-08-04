@@ -1,11 +1,8 @@
-__pycache__/**
-<<<<<<< HEAD
 calcdh.py
 calcso.py
 calctae.py
-=======
-calc*
->>>>>>> sciviewer
 cite.py
-table.tex
 dcbs.py
+harm_bending.py
+__pycache__
+table.tex
