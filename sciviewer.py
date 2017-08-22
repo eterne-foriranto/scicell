@@ -51,7 +51,7 @@ class SciViewer:
         except:
             return str(raw)
 
-    def build_table(self, common, top, left):
+    def build_table(self, common, top, left, decimal_places):
         height = max([len(series) for series in left])
         width = max([len(series) for series in top])
         lines = []
@@ -72,7 +72,7 @@ class SciViewer:
                 precell.collect_tags(i, left)
                 precell.collect_tags(j, top)
 
-                line.append(self.print(precell.tags))
+                line.append(self.print(precell.tags, decimal_places(precell.tags)))
             lines.append(line)
         return Table(lines)
 
@@ -90,8 +90,19 @@ class Table:
     def __init__(self, data):
         self.data = data
 
-    def to_TeX(self, file_var):
+    def to_TeX(self, lefts):
+
+        def dollarsigns(cell):
+            if len(cell) > 0:
+                return '$'
+            else:
+                return ''
+
         fin2join = []
-        for line in self.data:
-            fin2join.append('&'.join([cell for cell in line]))
-        file_var.write('\\\\\n'.join(fin2join) + '\\\\\n')
+        for line, left in zip(self.data, lefts):
+            if type(left) == list:
+                string_begin = '&'.join(left)
+            else:
+                string_begin = left
+            fin2join.append('{}&{}'.format(string_begin, '&'.join([dollarsigns(cell) + cell + dollarsigns(cell) for cell in line])))
+        print('\\\\\n'.join(fin2join) + '\\\\\n')
