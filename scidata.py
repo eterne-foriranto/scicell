@@ -174,7 +174,7 @@ class SciDataBase:
         return key[1:len(key) - 1].split('|')
 
     def split(self, olds, news):
-        def complete(tags):
+        def complete(tags): #completes given tags with new tags
             tags = set(tags)
             if type(news) == list:
                 for new in news:
@@ -195,6 +195,7 @@ class SciDataBase:
                 tags = complete(tags)
             cell = self.__base['data'][key]
             del(self.__base['data'][key])
+            print(key)
             tags.sort()
             self.__base['data'][self.wrap('|'.join(tags))] = cell
 
