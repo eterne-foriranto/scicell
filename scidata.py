@@ -139,7 +139,10 @@ class SciDataBase:
     def tags2key(self, tags):
         if type(tags) == str:
             return '|{}|'.format(tags)
-        new = tags[:]
+        elif type(tags) == list:
+            new = tags[:]
+        else:
+            new = tags
         new = set(new)
         new = list(new)
         new.sort()
@@ -173,31 +176,32 @@ class SciDataBase:
     def extract(self, key):
         return key[1:len(key) - 1].split('|')
 
-    def split(self, olds, news):
-        def complete(tags): #completes given tags with new tags
-            tags = set(tags)
-            if type(news) == list:
-                for new in news:
-                    tags.add(new)
+    def split(self, raw_olds, raw_news):
+        def setify(smth):
+            if type(smth) == list:
+                to_return = set(smth)
             else:
-                tags.add(news)
-            tags = list(tags)
-            return tags
+                to_return = set([smth])
+            return to_return
+        olds = setify(raw_olds)
+        news = setify(raw_news)
+        keys2change = []
         for key in self.__base['data'].keys():
-            tags = self.extract(key)
-            if type(olds) == list:
-                if set(olds).issubset(set(tags)):
-                    for old in olds:
-                        tags.remove(old)
-                    tags = complete(tags)
-            elif olds in tags:
-                tags.remove(olds)
-                tags = complete(tags)
-            cell = self.__base['data'][key]
-            del(self.__base['data'][key])
-            print(key)
-            tags.sort()
-            self.__base['data'][self.wrap('|'.join(tags))] = cell
+            tags = set(self.extract(key))
+            if olds.issubset(tags):
+                keys2change.append(key)
+            
+        for key2change in keys2change:
+            tags = set(self.extract(key2change))
+            for old in olds:
+                tags.remove(old)
+            for new in news:
+                tags.add(new)
+            new_key = self.tags2key(tags)
+            print('{} -> {}'.format(key2change, new_key))
+            cell = self.__base['data'][key2change]
+            self.__base['data'][new_key] = cell
+            del(self.__base['data'][key2change])
 
     def remove_tag(self, tag):
         pass
