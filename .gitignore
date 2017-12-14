@@ -1,9 +1,9 @@
-calcdh.py
-calcso.py
-calctae.py
-cite.py
-dcbs.py
-harm_bending.py
+*calcdh.*
+*calcso.*
+*calctae.*
+*cite.*
+*dcbs.*
+*harm_bending.*
 __pycache__
 table.tex
 Untitled.ipynb

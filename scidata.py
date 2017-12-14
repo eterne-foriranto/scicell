@@ -129,6 +129,8 @@ class SciDataBase:
         try:
             if type(cell) == list:
                 return self.__base['data'][self.tags2key(cell)]
+            elif '|' in cell:
+                return self.__base['data'][cell]
             else:
                 for value in self.__base['data'].values():
                     if value.label == cell:
