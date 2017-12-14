@@ -128,10 +128,13 @@ class SciDataBase:
     def find_cell(self, cell):
         try:
             if type(cell) == list:
+                #print('list')
                 return self.__base['data'][self.tags2key(cell)]
-            elif '|' in cell:
+            elif type(cell) == str and '|' in cell:
+                #print('key')
                 return self.__base['data'][cell]
             else:
+                #print('label')
                 for value in self.__base['data'].values():
                     if value.label == cell:
                         return value
