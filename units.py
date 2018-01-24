@@ -97,7 +97,8 @@ class Rcm(Unit):
         return 1e2, 'Diopter'
 
 class Angstrom(Unit):
-    pass
+    def to_base(self):
+        return 1e-10, 'Meter'
 
 class Joule(Unit):
     pass
