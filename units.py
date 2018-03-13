@@ -20,7 +20,8 @@ coefs['Diopter'] = {
         'Joule_rMole':AVOGADRO * PLANCK * LIGHTSPEED
         }
 coefs['Joule_rMole'] = {
-        'Joule':1 / AVOGADRO
+        'Joule':1 / AVOGADRO,
+        'Diopter':1 / AVOGADRO / PLANCK / LIGHTSPEED
         }
 
 def hub(from_, to):
