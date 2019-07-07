@@ -109,7 +109,11 @@ class SciDataBase:
             cell.visible = False
 
     def list_tags(self):
-        return self.__base['data'].tags
+        tags = set()
+        for key in self.__base['data'].keys():
+            for tag in self.extract(key):
+                tags.add(tag)
+        print(tags)
 
     def print_item(self, tags):
         cell = self.find_cell(tags)
